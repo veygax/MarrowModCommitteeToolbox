@@ -1,67 +1,71 @@
-﻿using HarmonyLib;
-using MelonLoader;
+﻿using MelonLoader;
 using System;
-using System.Reflection;
+using UnityEngine;
+using BoneLib.BoneMenu;
 using Il2CppSLZ.Marrow;
-using Il2CppSLZ.Marrow.Combat;
-using Il2CppSLZ.Combat;
+using Unity.Baselib.LowLevel;
 
 [assembly: MelonInfo(typeof(MarrowModCommitteeToolbox), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
 [assembly: MelonGame("Stress Level Zero", "BONELAB")]
 
 public class MarrowModCommitteeToolbox : MelonMod
 {
+    public static MelonPreferences_Category MelonPrefCategory { get; private set; }
+    public static bool isNoBloodEnabled { get; private set; }
+    public static MelonPreferences_Entry<bool> MelonPrefNoBloodEnabled { get; private set; }
+    private static bool _preferencesSetup = false;
+    public static Page menuPage { get; private set; }
+    public static BoolElement noBloodEnabledMenu { get; private set; }
+
     public override void OnInitializeMelon()
     {
         MelonLogger.Msg("Initializing Marrow Mod Commitee Toolbox...");
+        SetupMelonPrefs();
+        CreateMenu();
 
+        InitializeNoBlood();
+    }
+
+    public static void SetupMelonPrefs()
+    {
+        MelonPrefCategory = MelonPreferences.CreateCategory("Marrow Mod Commitee Toolbox");
+        MelonPrefNoBloodEnabled = MelonPrefCategory.CreateEntry("isNoBloodEnabled", true);
+
+        isNoBloodEnabled = MelonPrefNoBloodEnabled.Value;
+
+        _preferencesSetup = true;
+    }
+
+    private void CreateMenu()
+    {
+        menuPage = Page.Root.CreatePage("Marrow Mod Commitee Toolbox", Color.white);
+        noBloodEnabledMenu = menuPage.CreateBool("NoBlood", Color.red, isNoBloodEnabled, OnSetNoBloodEnabled);
+    }
+
+    private void OnSetNoBloodEnabled(bool value)
+    {
+        isNoBloodEnabled = value;
+        MelonPrefNoBloodEnabled.Value = value;
+        MelonPrefCategory.SaveToFile(false);
+        InitializeNoBlood();
+    }
+
+    private void InitializeNoBlood()
+    {
         try
         {
-            HarmonyInstance.Patch(
-                typeof(VisualDamageReceiver).GetMethod("ReceiveAttack"),
-                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
-            );
-            MelonLogger.Msg("Patched VisualDamageReceiver.ReceiveAttack method.");
-
-            HarmonyInstance.Patch(
-                typeof(VisualDamageController).GetMethod("AddToHitArray"),
-                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
-            );
-            MelonLogger.Msg("Patched VisualDamageController.AddToHitArray method.");
-
-            HarmonyInstance.Patch(
-                typeof(VisualDamageController).GetMethod("AddToCutArray"),
-                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
-            );
-            MelonLogger.Msg("Patched VisualDamageController.AddToCutArray method.");
-
-            HarmonyInstance.Patch(
-                typeof(VisualDamageController).GetMethod("BleedOverTimer"),
-                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
-            );
-            MelonLogger.Msg("Patched VisualDamageController.BleedOverTimer method.");
-
-            HarmonyInstance.Patch(
-                typeof(VisualDamageController).GetMethod("collectSkins"),
-                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
-            );
-            MelonLogger.Msg("Patched VisualDamageController.collectSkins method.");
-
-            HarmonyInstance.Patch(
-                typeof(ImpactProperties).GetMethod("ReceiveAttack"),
-                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
-            );
-            MelonLogger.Msg("Patched ImpactProperties.ReceiveAttack method.");
+            if (isNoBloodEnabled)
+            {
+                NoBlood.ApplyPatches(this);
+            }
+            else
+            {
+                NoBlood.RevertPatches(this);
+            }
         }
         catch (Exception ex)
         {
-            MelonLogger.Error($"Error while patching methods: {ex.Message}");
+            MelonLogger.Error($"Error while patching methods for NoBlood: {ex.Message}");
         }
-    }
-
-    public static bool DontRunThis(MethodBase __originalMethod)
-    {
-        MelonLogger.Msg($"DontRunThis method called. Preventing execution of {__originalMethod.DeclaringType.Name}.{__originalMethod.Name}.");
-        return false;
     }
 }

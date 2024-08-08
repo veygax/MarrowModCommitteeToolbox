@@ -30,28 +30,32 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-	<ItemGroup>
-		<Reference Include="0Harmony">
-			<HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
-		</Reference>
-		<Reference Include="Assembly-CSharp">
-			<HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
-		</Reference>
-		<Reference Include="MelonLoader">
-			<HintPath>$(BONELAB_DIR)\MelonLoader\net6\MelonLoader.dll</HintPath>
-		</Reference>
-		<Reference Include="Il2CppSLZ.Marrow">
-			<HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Il2CppSLZ.Marrow.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine">
-			<HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="MelonLoader">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\net6\MelonLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSLZ.Marrow">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Il2CppSLZ.Marrow.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+	<Reference Include="BoneLib">
+      <HintPath>$(BONELAB_DIR)\Mods\BoneLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
+    <Compile Include="NoBlood\NoBlood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
