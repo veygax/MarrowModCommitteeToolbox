@@ -23,12 +23,12 @@ public class MarrowModCommitteeToolbox : MelonMod
         SetupMelonPrefs();
         CreateMenu();
 
-        InitializeNoBlood();
+        InitializeNoBlood(false);
     }
 
     public static void SetupMelonPrefs()
     {
-        MelonPrefCategory = MelonPreferences.CreateCategory("Marrow Mod Commitee Toolbox");
+        MelonPrefCategory = MelonPreferences.CreateCategory("Marrow Mod Commitee");
         MelonPrefNoBloodEnabled = MelonPrefCategory.CreateEntry("isNoBloodEnabled", true);
 
         isNoBloodEnabled = MelonPrefNoBloodEnabled.Value;
@@ -47,20 +47,22 @@ public class MarrowModCommitteeToolbox : MelonMod
         isNoBloodEnabled = value;
         MelonPrefNoBloodEnabled.Value = value;
         MelonPrefCategory.SaveToFile(false);
-        InitializeNoBlood();
+        InitializeNoBlood(true);
     }
 
-    private void InitializeNoBlood()
+    private void InitializeNoBlood(bool updated)
     {
         try
         {
             if (isNoBloodEnabled)
             {
                 NoBlood.ApplyPatches(this);
+                MelonLogger.Msg("Reverted NoBlood Patches.");
             }
-            else
+            else if (isNoBloodEnabled == false && updated == true)
             {
                 NoBlood.RevertPatches(this);
+                MelonLogger.Msg("Reverted NoBlood Patches.");
             }
         }
         catch (Exception ex)
