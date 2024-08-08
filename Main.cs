@@ -12,10 +12,10 @@ using static MelonLoader.MelonLaunchOptions;
 using Il2CppSLZ.Combat;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoBlood), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
+[assembly: MelonInfo(typeof(MarrowModCommitteeToolbox), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
 [assembly: MelonGame("Stress Level Zero", "BONELAB")]
 
-public class NoBlood : MelonMod
+public class MarrowModCommitteeToolbox : MelonMod
 {
     public override void OnInitializeMelon()
     {
@@ -25,37 +25,37 @@ public class NoBlood : MelonMod
         {
             HarmonyInstance.Patch(
                 typeof(VisualDamageReceiver).GetMethod("ReceiveAttack"),
-                new HarmonyMethod(typeof(NoBlood).GetMethod("DontRunThis"))
+                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
             );
             MelonLogger.Msg("Patched VisualDamageReceiver.ReceiveAttack method.");
 
             HarmonyInstance.Patch(
                 typeof(VisualDamageController).GetMethod("AddToHitArray"),
-                new HarmonyMethod(typeof(NoBlood).GetMethod("DontRunThis"))
+                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
             );
             MelonLogger.Msg("Patched VisualDamageController.AddToHitArray method.");
 
             HarmonyInstance.Patch(
                 typeof(VisualDamageController).GetMethod("AddToCutArray"),
-                new HarmonyMethod(typeof(NoBlood).GetMethod("DontRunThis"))
+                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
             );
             MelonLogger.Msg("Patched VisualDamageController.AddToCutArray method.");
 
             HarmonyInstance.Patch(
                 typeof(VisualDamageController).GetMethod("BleedOverTimer"),
-                new HarmonyMethod(typeof(NoBlood).GetMethod("DontRunThis"))
+                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
             );
             MelonLogger.Msg("Patched VisualDamageController.BleedOverTimer method.");
 
             HarmonyInstance.Patch(
                 typeof(VisualDamageController).GetMethod("collectSkins"),
-                new HarmonyMethod(typeof(NoBlood).GetMethod("DontRunThis"))
+                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
             );
             MelonLogger.Msg("Patched VisualDamageController.collectSkins method.");
 
             HarmonyInstance.Patch(
                 typeof(ImpactProperties).GetMethod("ReceiveAttack"),
-                new HarmonyMethod(typeof(NoBlood).GetMethod("DontRunThis"))
+                new HarmonyMethod(typeof(MarrowModCommitteeToolbox).GetMethod("DontRunThis"))
             );
             MelonLogger.Msg("Patched ImpactProperties.ReceiveAttack method.");
         }
