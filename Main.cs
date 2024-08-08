@@ -1,16 +1,10 @@
 ﻿using HarmonyLib;
 using MelonLoader;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Combat;
-using static MelonLoader.MelonLaunchOptions;
 using Il2CppSLZ.Combat;
-using UnityEngine;
 
 [assembly: MelonInfo(typeof(MarrowModCommitteeToolbox), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
 [assembly: MelonGame("Stress Level Zero", "BONELAB")]
@@ -19,7 +13,7 @@ public class MarrowModCommitteeToolbox : MelonMod
 {
     public override void OnInitializeMelon()
     {
-        MelonLogger.Msg("Initializing No Blood Mod...");
+        MelonLogger.Msg("Initializing Marrow Mod Commitee Toolbox...");
 
         try
         {
