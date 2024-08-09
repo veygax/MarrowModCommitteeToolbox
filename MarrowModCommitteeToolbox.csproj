@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
     </Reference>
@@ -49,14 +52,20 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-	<Reference Include="BoneLib">
+    <Reference Include="BoneLib">
       <HintPath>$(BONELAB_DIR)\Mods\BoneLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Immortality\Immortality.cs" />
+    <Compile Include="InfiniteAmmo\InfiniteAmmo.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="NoBlood\NoBlood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpawnTools\ScenemakingToolsSpawner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

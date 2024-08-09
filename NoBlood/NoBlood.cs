@@ -1,10 +1,10 @@
 ﻿using HarmonyLib;
 using MelonLoader;
-using System;
-using System.Reflection;
-using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Combat;
 using Il2CppSLZ.Combat;
+using Il2CppSLZ.Marrow;
+using System.Reflection;
+
 
 public static class NoBlood
 {
@@ -12,96 +12,62 @@ public static class NoBlood
     {
         var harmony = mod.HarmonyInstance;
 
-        harmony.Patch(
-            typeof(VisualDamageReceiver).GetMethod("ReceiveAttack"),
-            new HarmonyMethod(typeof(DontRunMethods).GetMethod("DontRunThis", BindingFlags.Static | BindingFlags.Public))
-        );
-        MelonLogger.Msg("Patched VisualDamageReceiver.ReceiveAttack method.");
+        var method1 = typeof(VisualDamageReceiver).GetMethod("ReceiveAttack");
+        var method2 = typeof(ImpactProperties).GetMethod("ReceiveAttack");
+        var patchMethod = typeof(NoBlood).GetMethod(nameof(DontRunThis), BindingFlags.Static | BindingFlags.Public);
 
-        harmony.Patch(
-            typeof(VisualDamageController).GetMethod("AddToHitArray"),
-            new HarmonyMethod(typeof(DontRunMethods).GetMethod("DontRunThis", BindingFlags.Static | BindingFlags.Public))
-        );
-        MelonLogger.Msg("Patched VisualDamageController.AddToHitArray method.");
+        if (method1 != null && patchMethod != null)
+        {
+            harmony.Patch(method1, new HarmonyMethod(patchMethod));
+            MelonLogger.Msg("Patched VisualDamageReceiver.ReceiveAttack method.");
+        }
+        else
+        {
+            MelonLogger.Error("Failed to patch VisualDamageReceiver.ReceiveAttack method: method or patchMethod is null.");
+        }
 
-        harmony.Patch(
-            typeof(VisualDamageController).GetMethod("AddToCutArray"),
-            new HarmonyMethod(typeof(DontRunMethods).GetMethod("DontRunThis", BindingFlags.Static | BindingFlags.Public))
-        );
-        MelonLogger.Msg("Patched VisualDamageController.AddToCutArray method.");
-
-        harmony.Patch(
-            typeof(VisualDamageController).GetMethod("BleedOverTimer"),
-            new HarmonyMethod(typeof(DontRunMethods).GetMethod("DontRunThis", BindingFlags.Static | BindingFlags.Public))
-        );
-        MelonLogger.Msg("Patched VisualDamageController.BleedOverTimer method.");
-
-        harmony.Patch(
-            typeof(VisualDamageController).GetMethod("collectSkins"),
-            new HarmonyMethod(typeof(DontRunMethods).GetMethod("DontRunThis", BindingFlags.Static | BindingFlags.Public))
-        );
-        MelonLogger.Msg("Patched VisualDamageController.collectSkins method.");
-
-        harmony.Patch(
-            typeof(ImpactProperties).GetMethod("ReceiveAttack"),
-            new HarmonyMethod(typeof(DontRunMethods).GetMethod("DontRunThis", BindingFlags.Static | BindingFlags.Public))
-        );
-        MelonLogger.Msg("Patched ImpactProperties.ReceiveAttack method.");
+        if (method2 != null && patchMethod != null)
+        {
+            harmony.Patch(method2, new HarmonyMethod(patchMethod));
+            MelonLogger.Msg("Patched ImpactProperties.ReceiveAttack method.");
+        }
+        else
+        {
+            MelonLogger.Error("Failed to patch ImpactProperties.ReceiveAttack method: method or patchMethod is null.");
+        }
     }
 
     public static void RevertPatches(MelonMod mod)
     {
         var harmony = mod.HarmonyInstance;
 
-        harmony.Unpatch(
-            typeof(VisualDamageReceiver).GetMethod("ReceiveAttack"),
-            HarmonyPatchType.All,
-            harmony.Id
-        );
-        MelonLogger.Msg("Unpatched VisualDamageReceiver.ReceiveAttack method.");
+        var method1 = typeof(VisualDamageReceiver).GetMethod("ReceiveAttack");
+        var method2 = typeof(ImpactProperties).GetMethod("ReceiveAttack");
 
-        harmony.Unpatch(
-            typeof(VisualDamageController).GetMethod("AddToHitArray"),
-            HarmonyPatchType.All,
-            harmony.Id
-        );
-        MelonLogger.Msg("Unpatched VisualDamageController.AddToHitArray method.");
+        if (method1 != null)
+        {
+            harmony.Unpatch(method1, HarmonyPatchType.Prefix);
+            MelonLogger.Msg("Unpatched VisualDamageReceiver.ReceiveAttack method.");
+        }
+        else
+        {
+            MelonLogger.Error("Failed to unpatch VisualDamageReceiver.ReceiveAttack method: method is null.");
+        }
 
-        harmony.Unpatch(
-            typeof(VisualDamageController).GetMethod("AddToCutArray"),
-            HarmonyPatchType.All,
-            harmony.Id
-        );
-        MelonLogger.Msg("Unpatched VisualDamageController.AddToCutArray method.");
-
-        harmony.Unpatch(
-            typeof(VisualDamageController).GetMethod("BleedOverTimer"),
-            HarmonyPatchType.All,
-            harmony.Id
-        );
-        MelonLogger.Msg("Unpatched VisualDamageController.BleedOverTimer method.");
-
-        harmony.Unpatch(
-            typeof(VisualDamageController).GetMethod("collectSkins"),
-            HarmonyPatchType.All,
-            harmony.Id
-        );
-        MelonLogger.Msg("Unpatched VisualDamageController.collectSkins method.");
-
-        harmony.Unpatch(
-            typeof(ImpactProperties).GetMethod("ReceiveAttack"),
-            HarmonyPatchType.All,
-            harmony.Id
-        );
-        MelonLogger.Msg("Unpatched ImpactProperties.ReceiveAttack method.");
+        if (method2 != null)
+        {
+            harmony.Unpatch(method2, HarmonyPatchType.Prefix);
+            MelonLogger.Msg("Unpatched ImpactProperties.ReceiveAttack method.");
+        }
+        else
+        {
+            MelonLogger.Error("Failed to unpatch ImpactProperties.ReceiveAttack method: method is null.");
+        }
     }
 
-    public static class DontRunMethods
+    public static bool DontRunThis(MethodBase __originalMethod)
     {
-        public static bool DontRunThis(MethodBase __originalMethod)
-        {
-            MelonLogger.Msg($"DontRunThis method called. Preventing execution of {__originalMethod.DeclaringType.Name}.{__originalMethod.Name}.");
-            return false;
-        }
+        MelonLogger.Msg($"DontRunThis method called. Preventing execution of {__originalMethod.DeclaringType.Name}.{__originalMethod.Name}.");
+        return false;
     }
 }

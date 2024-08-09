@@ -11,11 +11,21 @@ using Unity.Baselib.LowLevel;
 public class MarrowModCommitteeToolbox : MelonMod
 {
     public static MelonPreferences_Category MelonPrefCategory { get; private set; }
-    public static bool isNoBloodEnabled { get; private set; }
-    public static MelonPreferences_Entry<bool> MelonPrefNoBloodEnabled { get; private set; }
     private static bool _preferencesSetup = false;
+    public static MelonPreferences_Entry<bool> MelonPrefNoBloodEnabled { get; private set; }
+    public static MelonPreferences_Entry<bool> MelonPrefInfiniteAmmoEnabled { get; private set; }
+    public static MelonPreferences_Entry<bool> MelonPrefImmortalityEnabled { get; private set; }
+
+
+    public static bool isNoBloodEnabled { get; private set; }
+    public static bool isInfiniteAmmoEnabled { get; private set; }
+    public static bool isImmortalityEnabled { get; private set; }
+   
+    
     public static Page menuPage { get; private set; }
     public static BoolElement noBloodEnabledMenu { get; private set; }
+    public static BoolElement infiniteAmmoEnabledMenu { get; private set; }
+    public static BoolElement immortalityEnabledMenu { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -24,14 +34,20 @@ public class MarrowModCommitteeToolbox : MelonMod
         CreateMenu();
 
         InitializeNoBlood(false);
+        InitializeInfiniteAmmo(false);
+        InitializeImmortality(false);
     }
 
     public static void SetupMelonPrefs()
     {
         MelonPrefCategory = MelonPreferences.CreateCategory("Marrow Mod Commitee");
         MelonPrefNoBloodEnabled = MelonPrefCategory.CreateEntry("isNoBloodEnabled", true);
+        MelonPrefInfiniteAmmoEnabled = MelonPrefCategory.CreateEntry("isInfiniteAmmoEnabled", true);
+        MelonPrefImmortalityEnabled = MelonPrefCategory.CreateEntry("isImmortalityEnabled", false);
 
         isNoBloodEnabled = MelonPrefNoBloodEnabled.Value;
+        isInfiniteAmmoEnabled = MelonPrefInfiniteAmmoEnabled.Value;
+        isImmortalityEnabled = MelonPrefImmortalityEnabled.Value;
 
         _preferencesSetup = true;
     }
@@ -40,6 +56,27 @@ public class MarrowModCommitteeToolbox : MelonMod
     {
         menuPage = Page.Root.CreatePage("Marrow Mod Commitee Toolbox", Color.white);
         noBloodEnabledMenu = menuPage.CreateBool("NoBlood", Color.red, isNoBloodEnabled, OnSetNoBloodEnabled);
+        infiniteAmmoEnabledMenu = menuPage.CreateBool("Infinite Ammo", Color.yellow, isInfiniteAmmoEnabled, OnSetInfiniteAmmoEnabled);
+        immortalityEnabledMenu = menuPage.CreateBool("Immortality", Color.cyan, isImmortalityEnabled, OnSetImmortalityEnabled);
+
+    }
+
+    // Set variables.
+
+    private void OnSetImmortalityEnabled(bool value)
+    {
+        isImmortalityEnabled = value;
+        MelonPrefImmortalityEnabled.Value = value;
+        MelonPrefCategory.SaveToFile(false);
+        InitializeImmortality(true);
+    }
+
+    private void OnSetInfiniteAmmoEnabled(bool value)
+    {
+        isInfiniteAmmoEnabled = value;
+        MelonPrefInfiniteAmmoEnabled.Value = value;
+        MelonPrefCategory.SaveToFile(false);
+        InitializeInfiniteAmmo(true);
     }
 
     private void OnSetNoBloodEnabled(bool value)
@@ -50,6 +87,29 @@ public class MarrowModCommitteeToolbox : MelonMod
         InitializeNoBlood(true);
     }
 
+    // Initialize different tools
+
+    private void InitializeImmortality(bool updated)
+    {
+        try
+        {
+            if (isImmortalityEnabled)
+            {
+                Immortality.ApplyPatches(this);
+                MelonLogger.Msg("Applied Immortality Patches.");
+            }
+            else if (isImmortalityEnabled == false && updated == true)
+            {
+                Immortality.RevertPatches(this);
+                MelonLogger.Msg("Reverted Immortality Patches.");
+            }
+        }
+        catch (Exception ex)
+        {
+            MelonLogger.Error($"Error while patching methods for Immortality: {ex.Message}");
+        }
+    }
+
     private void InitializeNoBlood(bool updated)
     {
         try
@@ -57,7 +117,7 @@ public class MarrowModCommitteeToolbox : MelonMod
             if (isNoBloodEnabled)
             {
                 NoBlood.ApplyPatches(this);
-                MelonLogger.Msg("Reverted NoBlood Patches.");
+                MelonLogger.Msg("Applied NoBlood Patches.");
             }
             else if (isNoBloodEnabled == false && updated == true)
             {
@@ -68,6 +128,27 @@ public class MarrowModCommitteeToolbox : MelonMod
         catch (Exception ex)
         {
             MelonLogger.Error($"Error while patching methods for NoBlood: {ex.Message}");
+        }
+    }
+
+    private void InitializeInfiniteAmmo(bool updated)
+    {
+        try
+        {
+            if (isInfiniteAmmoEnabled)
+            {
+                InfiniteAmmo.ApplyPatches(this);
+                MelonLogger.Msg("Applied InfiniteAmmo Patches.");
+            }
+            else if (isInfiniteAmmoEnabled == false && updated == true)
+            {
+                InfiniteAmmo.RevertPatches(this);
+                MelonLogger.Msg("Reverted InfiniteAmmo Patches.");
+            }
+        }
+        catch (Exception ex)
+        {
+            MelonLogger.Error($"Error while patching methods for InfiniteAmmo: {ex.Message}");
         }
     }
 }
