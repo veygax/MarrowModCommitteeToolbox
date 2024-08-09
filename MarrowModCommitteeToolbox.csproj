@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DebugTools\LogThings.cs" />
     <Compile Include="Immortality\Immortality.cs" />
     <Compile Include="InfiniteAmmo\InfiniteAmmo.cs" />
     <Compile Include="Main.cs" />

@@ -23,9 +23,15 @@ public class MarrowModCommitteeToolbox : MelonMod
    
     
     public static Page menuPage { get; private set; }
+    public static Page cheatsCategory { get; private set; }
+    public static Page debugCategory { get; private set; }
+
     public static BoolElement noBloodEnabledMenu { get; private set; }
     public static BoolElement infiniteAmmoEnabledMenu { get; private set; }
     public static BoolElement immortalityEnabledMenu { get; private set; }
+    public static FunctionElement logLeftHandMenu { get; private set; }
+    public static FunctionElement logRightHandMenu { get; private set; }
+    public static FunctionElement spawnScenemakingToolsMenu { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -55,9 +61,31 @@ public class MarrowModCommitteeToolbox : MelonMod
     private void CreateMenu()
     {
         menuPage = Page.Root.CreatePage("Marrow Mod Commitee Toolbox", Color.white);
+        cheatsCategory = menuPage.CreatePage("Cheats", Color.red);
+        debugCategory = menuPage.CreatePage("Debug", Color.blue);
+        
         noBloodEnabledMenu = menuPage.CreateBool("NoBlood", Color.red, isNoBloodEnabled, OnSetNoBloodEnabled);
-        infiniteAmmoEnabledMenu = menuPage.CreateBool("Infinite Ammo", Color.yellow, isInfiniteAmmoEnabled, OnSetInfiniteAmmoEnabled);
-        immortalityEnabledMenu = menuPage.CreateBool("Immortality", Color.cyan, isImmortalityEnabled, OnSetImmortalityEnabled);
+        infiniteAmmoEnabledMenu = cheatsCategory.CreateBool("Infinite Ammo", Color.yellow, isInfiniteAmmoEnabled, OnSetInfiniteAmmoEnabled);
+        immortalityEnabledMenu = cheatsCategory.CreateBool("Immortality", Color.cyan, isImmortalityEnabled, OnSetImmortalityEnabled);
+        logLeftHandMenu = debugCategory.CreateFunction("Log Left Hand Contents", Color.white, LogThings.LogItemInLeftHand);
+        logRightHandMenu = debugCategory.CreateFunction("Log Right Hand Contents", Color.white, LogThings.LogItemInRightHand);
+        spawnScenemakingToolsMenu = menuPage.CreateFunction("Spawn Scenemaking Tools", Color.white, ScenemakingToolsSpawner.SpawnTools);
+
+    }
+
+    public static void BoneMenuNotif(BoneLib.Notifications.NotificationType type, string content)
+    {
+        var notif = new BoneLib.Notifications.Notification
+        {
+            Title = "Marrow Mod Committee Toolbox",
+            Message = content,
+            Type = type,
+            PopupLength = 3,
+            ShowTitleOnPopup = true
+        };
+        BoneLib.Notifications.Notifier.Send(notif);
+
+        MelonLogger.Msg("Sent a notification: " + content);
 
     }
 

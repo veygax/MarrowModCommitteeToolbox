@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NoBlood")]
+[assembly: AssemblyTitle("Marrow Mod Committee Toolbox")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NoBlood")]
-[assembly: AssemblyCopyright("Copyright ©  2024")]
+[assembly: AssemblyProduct("Marrow Mod Committee Toolbox")]
+[assembly: AssemblyCopyright("VeygaX")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
