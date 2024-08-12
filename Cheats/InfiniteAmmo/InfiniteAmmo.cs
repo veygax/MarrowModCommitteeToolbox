@@ -12,11 +12,11 @@ public static class InfiniteAmmo
         public static void Awake(AmmoInventory __instance)
         {
             // Add 999 cartridges to each ammo group
-            __instance.AddCartridge(__instance.lightAmmoGroup, 999);
-            __instance.AddCartridge(__instance.mediumAmmoGroup, 999);
-            __instance.AddCartridge(__instance.heavyAmmoGroup, 999);
+            __instance.AddCartridge(__instance.lightAmmoGroup, 999999);
+            __instance.AddCartridge(__instance.mediumAmmoGroup, 999999);
+            __instance.AddCartridge(__instance.heavyAmmoGroup, 999999);
 
-            MelonLogger.Msg("InfiniteAmmo applied: 999 cartridges added to each ammo group.");
+            MelonLogger.Msg("InfiniteAmmo applied: 999999 cartridges added to each ammo group.");
         }
     }
 

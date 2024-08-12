@@ -4,6 +4,7 @@ using UnityEngine;
 using BoneLib.BoneMenu;
 using Il2CppSLZ.Marrow;
 using Unity.Baselib.LowLevel;
+using BoneLib.RadialMenu.UI;
 
 [assembly: MelonInfo(typeof(MarrowModCommitteeToolbox), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
 [assembly: MelonGame("Stress Level Zero", "BONELAB")]
@@ -25,13 +26,18 @@ public class MarrowModCommitteeToolbox : MelonMod
     public static Page menuPage { get; private set; }
     public static Page cheatsCategory { get; private set; }
     public static Page debugCategory { get; private set; }
+    public static Page avatarScaleSubCategory { get; private set; }
 
     public static BoolElement noBloodEnabledMenu { get; private set; }
     public static BoolElement infiniteAmmoEnabledMenu { get; private set; }
     public static BoolElement immortalityEnabledMenu { get; private set; }
     public static FunctionElement logLeftHandMenu { get; private set; }
     public static FunctionElement logRightHandMenu { get; private set; }
+    public static FunctionElement leftHandItemDetailsMenu { get; private set; }
+    public static FunctionElement rightHandItemDetailsMenu { get; private set; }
     public static FunctionElement spawnScenemakingToolsMenu { get; private set; }
+    //public static FloatElement setAvatarScaleMenu { get; private set; }
+    //public static FunctionElement applyAvatarScaleMenu { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -63,13 +69,27 @@ public class MarrowModCommitteeToolbox : MelonMod
         menuPage = Page.Root.CreatePage("Marrow Mod Commitee Toolbox", Color.white);
         cheatsCategory = menuPage.CreatePage("Cheats", Color.red);
         debugCategory = menuPage.CreatePage("Debug", Color.blue);
+        avatarScaleSubCategory = cheatsCategory.CreatePage("Avatar Scale", Color.blue);
         
         noBloodEnabledMenu = menuPage.CreateBool("NoBlood", Color.red, isNoBloodEnabled, OnSetNoBloodEnabled);
         infiniteAmmoEnabledMenu = cheatsCategory.CreateBool("Infinite Ammo", Color.yellow, isInfiniteAmmoEnabled, OnSetInfiniteAmmoEnabled);
         immortalityEnabledMenu = cheatsCategory.CreateBool("Immortality", Color.cyan, isImmortalityEnabled, OnSetImmortalityEnabled);
+
+
         logLeftHandMenu = debugCategory.CreateFunction("Log Left Hand Contents", Color.white, LogThings.LogItemInLeftHand);
         logRightHandMenu = debugCategory.CreateFunction("Log Right Hand Contents", Color.white, LogThings.LogItemInRightHand);
+        leftHandItemDetailsMenu = debugCategory.CreateFunction("Left Hand Contents Details", Color.blue, ItemInHandDetails.LeftHandItemDetails);
+        rightHandItemDetailsMenu = debugCategory.CreateFunction("Right Hand Contents Details", Color.blue, ItemInHandDetails.RightHandItemDetails);
         spawnScenemakingToolsMenu = menuPage.CreateFunction("Spawn Scenemaking Tools", Color.white, ScenemakingToolsSpawner.SpawnTools);
+
+        /*setAvatarScaleMenu = avatarScaleSubCategory.CreateFloat("Scale", Color.yellow, AvatarScale.scale, 0.1f, 0.1f, 10f, (Action<float>)delegate (float f)
+        {
+            AvatarScale.scale = f;
+        });
+        applyAvatarScaleMenu = avatarScaleSubCategory.CreateFunction("Apply", Color.green, (Action)delegate
+        {
+            AvatarScale.ScaleAvatar();
+        });*/
 
     }
 

@@ -60,9 +60,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cheats\AnyMagazine\AnyMagazine.cs" />
+    <Compile Include="Cheats\AvatarScale\AvatarScale.cs" />
+    <Compile Include="DebugTools\ItemInHandDetails.cs" />
     <Compile Include="DebugTools\LogThings.cs" />
-    <Compile Include="Immortality\Immortality.cs" />
-    <Compile Include="InfiniteAmmo\InfiniteAmmo.cs" />
+    <Compile Include="Cheats\Immortality\Immortality.cs" />
+    <Compile Include="Cheats\InfiniteAmmo\InfiniteAmmo.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="NoBlood\NoBlood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
