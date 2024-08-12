@@ -4,7 +4,6 @@ using UnityEngine;
 using BoneLib.BoneMenu;
 using Il2CppSLZ.Marrow;
 using Unity.Baselib.LowLevel;
-using BoneLib.RadialMenu.UI;
 
 [assembly: MelonInfo(typeof(MarrowModCommitteeToolbox), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
 [assembly: MelonGame("Stress Level Zero", "BONELAB")]
