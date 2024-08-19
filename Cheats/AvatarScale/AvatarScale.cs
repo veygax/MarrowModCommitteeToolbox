@@ -26,36 +26,48 @@ public class AvatarScale
         {
             // Store the instance for later use
             _bodyVitalsInstance = __instance;
+#if DEBUG
             MelonLogger.Msg("BodyVitals instance captured.");
+#endif
         }
     }
 
     public static void ScaleAvatar()
     {
-        AvatarCrateReference avatarCrateRef = (AvatarCrateReference)Player.RigManager._avatarCrate;
-        string barcode = avatarCrateRef.Barcode.ID;
-        Action<GameObject> action = delegate (GameObject obj)
+        AvatarCrate crate;
+        if (AssetWarehouse.Instance.TryGetCrate(Player.RigManager._avatarCrate._barcode, out crate))
         {
-            GameObject val = UnityEngine.Object.Instantiate<GameObject>(obj);
-            Vector3 localScale = val.transform.localScale;
-            localScale.x *= scale;
-            localScale.y *= scale;
-            localScale.z *= scale;
-            val.transform.localScale = localScale;
-            val.transform.parent = ((Component)Player.RigManager).transform;
-            val.transform.localPosition = Vector3.zero;
-            Avatar componentInChildren = val.GetComponentInChildren<Avatar>();
-            foreach (SkinnedMeshRenderer item in (Il2CppArrayBase<SkinnedMeshRenderer>)(object)componentInChildren.hairMeshes)
+            System.Action<GameObject> action = delegate (GameObject obj)
             {
-                ((Renderer)item).enabled = false;
-            }
+                GameObject gameObject = UnityEngine.Object.Instantiate(obj);
+                Vector3 localScale = gameObject.transform.localScale;
+                localScale.x *= scale;
+                localScale.y *= scale;
+                localScale.z *= scale;
+                gameObject.transform.localScale = localScale;
+                gameObject.transform.parent = ((Component)(object)Player.RigManager).transform;
+                gameObject.transform.localPosition = Vector3.zero;
+                Avatar componentInChildren = gameObject.GetComponentInChildren<Avatar>();
+                foreach (SkinnedMeshRenderer item in (Il2CppArrayBase<SkinnedMeshRenderer>)(object)componentInChildren.hairMeshes)
+                {
+                    item.enabled = false;
+                }
+#if DEBUG
             MelonLogger.Msg("Changed scale to " + scale + "x");
-            componentInChildren.PrecomputeAvatar();
-            componentInChildren.RefreshBodyMeasurements();
-            Player.RigManager.SwitchAvatar(componentInChildren);
-            _bodyVitalsInstance.PROPEGATE();
-            
-        };
-
+#endif
+                componentInChildren.PrecomputeAvatar();
+                componentInChildren.RefreshBodyMeasurements();
+                Player.RigManager.SwitchAvatar(componentInChildren);
+                _bodyVitalsInstance.PROPEGATE();
+            };
+            ((CrateT<GameObject>)(object)crate).LoadAsset((Il2CppSystem.Action<GameObject>)action);
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Msg("Failed to find avatar crate.");
+#endif
+        }
+        
     }
 }

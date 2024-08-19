@@ -20,7 +20,9 @@ public static class ScenemakingToolsSpawner
         {
             // Store the instance for later use
             _cheatToolInstance = __instance;
+#if DEBUG
             MelonLogger.Msg("CheatTool instance captured.");
+#endif
         }
     }
 
@@ -28,7 +30,9 @@ public static class ScenemakingToolsSpawner
     {
         if (_cheatToolInstance == null)
         {
+#if DEBUG
             MelonLogger.Error("CheatTool instance is not initialized yet.");
+#endif
             return;
         }
 
@@ -60,7 +64,9 @@ public static class ScenemakingToolsSpawner
             // Replace crates with the new array
             _cheatToolInstance.crates = newCrateList.ToArray();
 
+#if DEBUG
             MelonLogger.Msg("CheatTool.crates replaced with custom objects.");
+#endif
 
             // Call the original method to spawn the debug objects
             _cheatToolInstance.SpawnDebugObjects();
@@ -69,7 +75,9 @@ public static class ScenemakingToolsSpawner
         {
             // Revert crates back to the original array
             _cheatToolInstance.crates = originalCrates;
+#if DEBUG
             MelonLogger.Msg("CheatTool.crates reverted to the original objects.");
+#endif
         }
     }
 }

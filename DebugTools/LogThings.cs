@@ -49,4 +49,38 @@ public static class LogThings
             MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
         }
     }
+    public static void LogHeadTransform()
+    {
+        string errortext = "";
+        try
+        {
+            if (BoneLib.Player.Head == null)
+            { errortext = "Error: No head bruh."; throw new Exception(); }
+            if (BoneLib.Player.Head.transform.position == null)
+            { errortext = "Error: Can't get head position :("; throw new Exception(); }
+            if (BoneLib.Player.Head.transform.rotation == null)
+            { errortext = "Error: Can't get head rotation :("; throw new Exception(); }
+            if (BoneLib.Player.Head.transform.localScale == null)
+            { errortext = "Error: Can't get head scale :("; throw new Exception(); }
+            if (BoneLib.Player.Head.transform == null)
+            { errortext = "Error: Can't get head transform :("; throw new Exception(); }
+
+            string headposition = BoneLib.Player.Head.transform.position.ToString();
+            MelonLogger.Msg("Logged head position: " + headposition);
+
+            string headrotation = BoneLib.Player.Head.transform.rotation.ToString();
+            MelonLogger.Msg("Logged head rotation: " + headrotation);
+
+            string headscale = BoneLib.Player.Head.transform.localScale.ToString();
+            MelonLogger.Msg("Logged head scale: " + headscale);
+
+            string headtransform = BoneLib.Player.Head.transform.ToString();
+            MelonLogger.Msg("Logged head transform: " + headtransform);
+        }
+        catch (Exception)
+        {
+            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
+            return;
+        }
+    }
 }

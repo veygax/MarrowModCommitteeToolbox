@@ -16,7 +16,9 @@ public static class InfiniteAmmo
             __instance.AddCartridge(__instance.mediumAmmoGroup, 999999);
             __instance.AddCartridge(__instance.heavyAmmoGroup, 999999);
 
+#if DEBUG
             MelonLogger.Msg("InfiniteAmmo applied: 999999 cartridges added to each ammo group.");
+#endif
         }
     }
 
@@ -30,11 +32,15 @@ public static class InfiniteAmmo
         if (original != null && postfix != null)
         {
             harmony.Patch(original, postfix: new HarmonyMethod(postfix));
+#if DEBUG
             MelonLogger.Msg("Patch applied to AmmoInventory.Awake method.");
+#endif
         }
         else
         {
+#if DEBUG
             MelonLogger.Error("Failed to apply patch: original or postfix method is null.");
+#endif
         }
     }
 
@@ -47,11 +53,15 @@ public static class InfiniteAmmo
         if (original != null)
         {
             harmony.Unpatch(original, HarmonyPatchType.Postfix);
+#if DEBUG
             MelonLogger.Msg("Patch removed from AmmoInventory.Awake method.");
+#endif
         }
         else
         {
+#if DEBUG
             MelonLogger.Error("Failed to remove patch: original method is null.");
+#endif
         }
     }
 }
