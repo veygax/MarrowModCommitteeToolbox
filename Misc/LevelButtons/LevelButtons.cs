@@ -4,50 +4,62 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.Reflection;
 using Il2CppSLZ.Interaction;
+using MelonLoader;
+using HarmonyLib;
 
 public static class LevelButtons
 {
-    public static void Disable()
+    public static void ApplyPatches(MelonMod mod)
     {
-        var objectsWithKeyword = UnityEngine.Object.FindObjectsOfType<Transform>(true);
-        foreach (Transform obj in objectsWithKeyword)
+        var harmony = mod.HarmonyInstance;
+
+        var methodToPatch = typeof(ButtonToggle).GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        var patchMethod = typeof(LevelButtons).GetMethod(nameof(DontRunThis), BindingFlags.Static | BindingFlags.Public);
+
+        if (methodToPatch != null && patchMethod != null)
         {
-            if (obj.name.Contains("FLOORS") || obj.name.Contains("LoadButtons") || obj.name.Contains("prop_bigButton") || obj.name.Contains("INTERACTION"))
-            {
-                for (int i = 0; i < obj.childCount; i++)
-                {
-                    Transform child = obj.GetChild(i);
-                    ButtonToggle buttonToggle = child.GetComponent<ButtonToggle>();
-                    if (buttonToggle != null)
-                    {
-                        if (!child.name.Contains("prop_bigButton_NEXTLEVEL"))
-                        {
-                            buttonToggle.enabled = false;
-                        }
-                    }
-                }
-            }
+            harmony.Patch(methodToPatch, new HarmonyMethod(patchMethod));
+#if DEBUG
+            MelonLogger.Msg("Patched ButtonToggle.Update method.");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Error("Failed to patch ButtonToggle.Update method: method or patchMethod is null.");
+#endif
         }
     }
 
-    public static void Enable()
+    public static void RevertPatches(MelonMod mod)
     {
-        var objectsWithKeyword = UnityEngine.Object.FindObjectsOfType<Transform>(true);
-        foreach (Transform obj in objectsWithKeyword)
+        var harmony = mod.HarmonyInstance;
+
+        var methodToPatch = typeof(ButtonToggle).GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        if (methodToPatch != null)
         {
-            if (obj.name.Contains("FLOORS") || obj.name.Contains("LoadButtons") || obj.name.Contains("prop_bigButton") || obj.name.Contains("INTERACTION"))
-            {
-                for (int i = 0; i < obj.childCount; i++)
-                {
-                    Transform child = obj.GetChild(i);
-                    ButtonToggle buttonToggle = child.GetComponent<ButtonToggle>();
-                    if (buttonToggle != null)
-                    {
-                        buttonToggle.enabled = true;
-                    }
-                }
-            }
+            harmony.Unpatch(methodToPatch, HarmonyPatchType.Prefix);
+#if DEBUG
+            MelonLogger.Msg("Unpatched ButtonToggle.Update method.");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Error("Failed to unpatch ButtonToggle.Update method: method is null.");
+#endif
         }
     }
+
+    public static bool DontRunThis(MethodBase __originalMethod)
+    {
+#if DEBUG
+        MelonLogger.Msg($"DontRunThis method called. Preventing execution of {__originalMethod.DeclaringType.Name}.{__originalMethod.Name}.");
+#endif
+        return false;
+    }
+
 }

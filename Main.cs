@@ -64,6 +64,14 @@ public class MarrowModCommitteeToolbox : MelonMod
         InitializeHeadFixer(false);
     }
 
+    public override void OnUpdate()
+    {
+        if (isHeadFixed)
+        {
+            FixHead.SetPosition();
+        }
+    }
+
     public static void SetupMelonPrefs()
     {
         MelonPrefCategory = MelonPreferences.CreateCategory("Marrow Mod Commitee");
@@ -261,14 +269,14 @@ public class MarrowModCommitteeToolbox : MelonMod
         {
             if (isLevelButtonsDisabled)
             {
-                LevelButtons.Disable();
+                LevelButtons.ApplyPatches(this);
 #if DEBUG
                 MelonLogger.Msg("Disabled level buttons.");
 #endif
             }
             else if (isLevelButtonsDisabled == false && updated == true)
             {
-                LevelButtons.Enable();
+                LevelButtons.RevertPatches(this);
 #if DEBUG
                 MelonLogger.Msg("Enabled level buttons.");
 #endif

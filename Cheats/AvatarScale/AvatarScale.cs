@@ -58,7 +58,7 @@ public class AvatarScale
                 componentInChildren.PrecomputeAvatar();
                 componentInChildren.RefreshBodyMeasurements();
                 Player.RigManager.SwitchAvatar(componentInChildren);
-                _bodyVitalsInstance.PROPEGATE();
+                _bodyVitalsInstance.CalibratePlayerBodyScale();
             };
             ((CrateT<GameObject>)(object)crate).LoadAsset((Il2CppSystem.Action<GameObject>)action);
         }
