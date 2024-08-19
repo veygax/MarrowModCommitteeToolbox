@@ -16,16 +16,16 @@ using HarmonyLib;
 public class AvatarScale
 {
     public static float scale = 1f;
-    private static BodyVitals _bodyVitalsInstance;
+    private static PlayerRefs _playerRefsInstance;
 
-    [HarmonyPatch(typeof(BodyVitals))]
-    [HarmonyPatch(nameof(BodyVitals.Start))]
-    private static class BodyVitalsStartPatch
+    [HarmonyPatch(typeof(PlayerRefs))]
+    [HarmonyPatch(nameof(PlayerRefs.Awake))]
+    private static class PlayerRefsAwakePatch
     {
-        private static void Postfix(BodyVitals __instance)
+        private static void Postfix(PlayerRefs __instance)
         {
             // Store the instance for later use
-            _bodyVitalsInstance = __instance;
+            _playerRefsInstance = __instance;
 #if DEBUG
             MelonLogger.Msg("BodyVitals instance captured.");
 #endif
@@ -58,7 +58,7 @@ public class AvatarScale
                 componentInChildren.PrecomputeAvatar();
                 componentInChildren.RefreshBodyMeasurements();
                 Player.RigManager.SwitchAvatar(componentInChildren);
-                _bodyVitalsInstance.CalibratePlayerBodyScale();
+                _playerRefsInstance._bodyVitals.PROPEGATE();
             };
             ((CrateT<GameObject>)(object)crate).LoadAsset((Il2CppSystem.Action<GameObject>)action);
         }
