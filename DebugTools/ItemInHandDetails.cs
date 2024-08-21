@@ -23,12 +23,12 @@ public static class ItemInHandDetails
             string description = BoneLib.Player.GetComponentInHand<Poolee>(BoneLib.Player.LeftHand).SpawnableCrate.Description;
             //string creator = BoneLib.Player.GetComponentInHand<Poolee>(BoneLib.Player.LeftHand).SpawnableCrate.title;
 
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Information, name + "\n" + description);
+            Main.BoneMenuNotif(NotificationType.Information, name + "\n" + description);
 
         }
         catch (Exception)
         {
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
+            Main.BoneMenuNotif(NotificationType.Error, errortext);
         }
     }
 
@@ -46,12 +46,12 @@ public static class ItemInHandDetails
             string description = BoneLib.Player.GetComponentInHand<Poolee>(BoneLib.Player.RightHand).SpawnableCrate.Description;
             //string creator = BoneLib.Player.GetComponentInHand<Poolee>(BoneLib.Player.LeftHand).SpawnableCrate.title;
 
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Information, name + "\n" + description);
+            Main.BoneMenuNotif(NotificationType.Information, name + "\n" + description);
 
         }
         catch (Exception)
         {
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
+            Main.BoneMenuNotif(NotificationType.Error, errortext);
         }
     }
 }

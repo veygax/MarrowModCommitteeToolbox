@@ -5,10 +5,10 @@ using BoneLib.BoneMenu;
 using Il2CppSLZ.Marrow;
 using Unity.Baselib.LowLevel;
 
-[assembly: MelonInfo(typeof(MarrowModCommitteeToolbox), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
+[assembly: MelonInfo(typeof(Main), "Marrow Mod Commitee Toolbox", "1.0.0", "VeygaX")]
 [assembly: MelonGame("Stress Level Zero", "BONELAB")]
 
-public class MarrowModCommitteeToolbox : MelonMod
+public class Main : MelonMod
 {
     public static MelonPreferences_Category MelonPrefCategory { get; private set; }
     private static bool _preferencesSetup = false;
@@ -17,6 +17,7 @@ public class MarrowModCommitteeToolbox : MelonMod
     public static MelonPreferences_Entry<bool> MelonPrefImmortalityEnabled { get; private set; }
     public static MelonPreferences_Entry<bool> MelonPrefLevelButtonsDisabled { get; private set; }
     public static MelonPreferences_Entry<bool> MelonPrefHeadFixed { get; private set; }
+    public static MelonPreferences_Entry<bool> MelonPrefAnyMagazineEnabled { get; private set; }
 
 
     public static bool isNoBloodEnabled { get; private set; }
@@ -24,14 +25,17 @@ public class MarrowModCommitteeToolbox : MelonMod
     public static bool isImmortalityEnabled { get; private set; }
     public static bool isLevelButtonsDisabled { get; private set; }
     public static bool isHeadFixed { get ; private set; }
+    public static bool isAnyMagazineEnabled { get; private set; }
 
     public static Page menuPage { get; private set; }
     public static Page cheatsCategory { get; private set; }
     public static Page debugCategory { get; private set; }
-    public static Page avatarScaleSubCategory { get; private set; }
+    public static Page scalingSubCategory { get; private set; }
     public static Page miscCategory { get; private set; }
 
-
+    public static Page avatarScalingSubCategory { get; private set; }
+    public static Page leftHandScalingSubCategory { get; private set; }
+    public static Page rightHandScalingSubCategory { get; private set; }
 
     public static BoolElement noBloodEnabledMenu { get; private set; }
     public static FunctionElement spawnScenemakingToolsMenu { get; private set; }
@@ -41,15 +45,23 @@ public class MarrowModCommitteeToolbox : MelonMod
 
     public static BoolElement infiniteAmmoEnabledMenu { get; private set; }
     public static BoolElement immortalityEnabledMenu { get; private set; }
+    public static BoolElement anyMagazineEnabledMenu { get; private set; }
+
+    public static FloatElement setAvatarScaleMenu { get; private set; }
+    public static FunctionElement applyAvatarScaleMenu { get; private set; }
+
+    public static FloatElement setLeftHandItemScaleMenu { get; private set; }
+    public static FunctionElement applyLeftHandItemScaleMenu { get; private set; }
+
+    public static FloatElement setRightHandItemScaleMenu { get; private set; }
+    public static FunctionElement applyRightHandItemScaleMenu { get; private set; }
 
     public static FunctionElement logLeftHandMenu { get; private set; }
     public static FunctionElement logRightHandMenu { get; private set; }
     public static FunctionElement logHeadTransform { get; private set; }
     public static FunctionElement leftHandItemDetailsMenu { get; private set; }
     public static FunctionElement rightHandItemDetailsMenu { get; private set; }
-    
-    public static FloatElement setAvatarScaleMenu { get; private set; }
-    public static FunctionElement applyAvatarScaleMenu { get; private set; }
+      
 
     public override void OnInitializeMelon()
     {
@@ -61,7 +73,8 @@ public class MarrowModCommitteeToolbox : MelonMod
         InitializeInfiniteAmmo(false);
         InitializeImmortality(false);
         InitializeLevelButtonDisabler(false);
-        InitializeHeadFixer(false);
+        InitializeAnyMagazine(false);
+        //InitializeHeadFixer(false);
     }
 
     public override void OnUpdate()
@@ -80,11 +93,13 @@ public class MarrowModCommitteeToolbox : MelonMod
         MelonPrefImmortalityEnabled = MelonPrefCategory.CreateEntry("isImmortalityEnabled", false);
         MelonPrefLevelButtonsDisabled = MelonPrefCategory.CreateEntry("isLevelButtonsDisabled", false);
         MelonPrefHeadFixed = MelonPrefCategory.CreateEntry("isHeadFixed", false);
+        MelonPrefAnyMagazineEnabled = MelonPrefCategory.CreateEntry("isAnyMagazineEnabled", false);
 
         isNoBloodEnabled = MelonPrefNoBloodEnabled.Value;
         isInfiniteAmmoEnabled = MelonPrefInfiniteAmmoEnabled.Value;
         isImmortalityEnabled = MelonPrefImmortalityEnabled.Value;
         isLevelButtonsDisabled = MelonPrefLevelButtonsDisabled.Value;
+        isAnyMagazineEnabled = MelonPrefAnyMagazineEnabled.Value;
         isHeadFixed = MelonPrefHeadFixed.Value;
 
         _preferencesSetup = true;
@@ -95,17 +110,22 @@ public class MarrowModCommitteeToolbox : MelonMod
         menuPage = Page.Root.CreatePage("Marrow Mod Commitee Toolbox", Color.white);
         cheatsCategory = menuPage.CreatePage("Cheats", Color.red);
         debugCategory = menuPage.CreatePage("Debug", Color.blue);
-        avatarScaleSubCategory = cheatsCategory.CreatePage("Avatar Scale", Color.blue);
+        scalingSubCategory = cheatsCategory.CreatePage("Scaling", Color.blue);
         miscCategory = menuPage.CreatePage("Misc", Color.white);
-        
+
+        avatarScalingSubCategory = scalingSubCategory.CreatePage("Avatar", Color.white);
+        leftHandScalingSubCategory = scalingSubCategory.CreatePage("Left Hand", Color.white);
+        rightHandScalingSubCategory = scalingSubCategory.CreatePage("Right Hand", Color.white);
+
         noBloodEnabledMenu = miscCategory.CreateBool("NoBlood", Color.red, isNoBloodEnabled, OnSetNoBloodEnabled);
         spawnScenemakingToolsMenu = miscCategory.CreateFunction("Spawn Scenemaking Tools", Color.white, ScenemakingToolsSpawner.SpawnTools);
         disableLevelButtonsMenu = miscCategory.CreateBool("Disable Level Buttons", Color.white, isLevelButtonsDisabled, OnSetLevelButtonsDisabled);
-        fixHeadMenu = miscCategory.CreateBool("Fix Head", Color.white, isHeadFixed, OnSetHeadFixed);
+        //fixHeadMenu = miscCategory.CreateBool("Fix Head", Color.white, isHeadFixed, OnSetHeadFixed);
 
 
         infiniteAmmoEnabledMenu = cheatsCategory.CreateBool("Infinite Ammo", Color.yellow, isInfiniteAmmoEnabled, OnSetInfiniteAmmoEnabled);
         immortalityEnabledMenu = cheatsCategory.CreateBool("Immortality", Color.cyan, isImmortalityEnabled, OnSetImmortalityEnabled);
+        //anyMagazineEnabledMenu = cheatsCategory.CreateBool("Any Magazine", Color.red, isAnyMagazineEnabled, OnSetImmortalityEnabled);
 
 
         logLeftHandMenu = debugCategory.CreateFunction("Log Left Hand Contents", Color.white, LogThings.LogItemInLeftHand);
@@ -115,13 +135,31 @@ public class MarrowModCommitteeToolbox : MelonMod
         rightHandItemDetailsMenu = debugCategory.CreateFunction("Right Hand Contents Details", Color.blue, ItemInHandDetails.RightHandItemDetails);
         
 
-        setAvatarScaleMenu = avatarScaleSubCategory.CreateFloat("Scale", Color.yellow, AvatarScale.scale, 0.1f, 0.1f, 10f, (Action<float>)delegate (float f)
+        setAvatarScaleMenu = avatarScalingSubCategory.CreateFloat("Scale", Color.yellow, MarrowModCommitteeToolbox.Cheats.Scaling.AvatarScale.scale, 0.1f, 0.1f, 10f, (Action<float>)delegate (float f)
         {
-            AvatarScale.scale = f;
+            MarrowModCommitteeToolbox.Cheats.Scaling.AvatarScale.scale = f;
         });
-        applyAvatarScaleMenu = avatarScaleSubCategory.CreateFunction("Apply", Color.green, (Action)delegate
+        applyAvatarScaleMenu = avatarScalingSubCategory.CreateFunction("Apply", Color.green, (Action)delegate
         {
-            AvatarScale.ScaleAvatar();
+            MarrowModCommitteeToolbox.Cheats.Scaling.AvatarScale.ScaleAvatar();
+        });
+
+        setLeftHandItemScaleMenu = leftHandScalingSubCategory.CreateFloat("Scale", Color.yellow, MarrowModCommitteeToolbox.Cheats.Scaling.AvatarScale.scale, 0.1f, 0.1f, 10f, (Action<float>)delegate (float f)
+        {
+            MarrowModCommitteeToolbox.Cheats.Scaling.ItemScale.leftHandItemScale = f;
+        });
+        applyLeftHandItemScaleMenu = leftHandScalingSubCategory.CreateFunction("Apply", Color.green, (Action)delegate
+        {
+            MarrowModCommitteeToolbox.Cheats.Scaling.ItemScale.ScaleItemInLeftHand();
+        });
+
+        setRightHandItemScaleMenu = rightHandScalingSubCategory.CreateFloat("Scale", Color.yellow, MarrowModCommitteeToolbox.Cheats.Scaling.AvatarScale.scale, 0.1f, 0.1f, 10f, (Action<float>)delegate (float f)
+        {
+            MarrowModCommitteeToolbox.Cheats.Scaling.ItemScale.rightHandItemScale = f;
+        });
+        applyRightHandItemScaleMenu = rightHandScalingSubCategory.CreateFunction("Apply", Color.green, (Action)delegate
+        {
+            MarrowModCommitteeToolbox.Cheats.Scaling.ItemScale.ScaleItemInRightHand();
         });
 
     }
@@ -184,6 +222,14 @@ public class MarrowModCommitteeToolbox : MelonMod
         MelonPrefHeadFixed.Value = value;
         MelonPrefCategory.SaveToFile(false);
         InitializeHeadFixer(true);
+    }
+
+    private void OnSetAnyMagazineEnabled(bool value)
+    {
+        isAnyMagazineEnabled = value;
+        MelonPrefAnyMagazineEnabled.Value = value;
+        MelonPrefCategory.SaveToFile(false);
+        InitializeAnyMagazine(true);
     }
 
     // Initialize different tools
@@ -310,6 +356,31 @@ public class MarrowModCommitteeToolbox : MelonMod
         catch (Exception ex)
         {
             MelonLogger.Error($"Error while fixing head: {ex.Message}");
+        }
+    }
+
+    private void InitializeAnyMagazine(bool updated)
+    {
+        try
+        {
+            if (isAnyMagazineEnabled)
+            {
+                MarrowModCommitteeToolbox.Cheats.AnyMagazine.ApplyPatches(this);
+#if DEBUG
+                MelonLogger.Msg("Applied AnyMagazine Patches.");
+#endif
+            }
+            else if (isAnyMagazineEnabled == false && updated == true)
+            {
+                MarrowModCommitteeToolbox.Cheats.AnyMagazine.RevertPatches(this);
+#if DEBUG
+                MelonLogger.Msg("Reverted AnyMagazine Patches.");
+#endif
+            }
+        }
+        catch (Exception ex)
+        {
+            MelonLogger.Error($"Error while patching methods for AnyMagazine: {ex.Message}");
         }
     }
 

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using BoneLib;
 using BoneLib.Notifications;
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Pool;
 using MelonLoader;
+using UnityEngine;
 
 public static class LogThings
 {
@@ -26,7 +29,7 @@ public static class LogThings
         }
         catch (Exception)
         {
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
+            Main.BoneMenuNotif(NotificationType.Error, errortext);
         }
     }
     public static void LogItemInRightHand()
@@ -46,7 +49,7 @@ public static class LogThings
         }
         catch (Exception)
         {
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
+            Main.BoneMenuNotif(NotificationType.Error, errortext);
         }
     }
     public static void LogHeadTransform()
@@ -56,15 +59,14 @@ public static class LogThings
         {
             if (BoneLib.Player.Head == null)
             { errortext = "Error: No head bruh."; throw new Exception(); }
-            if (BoneLib.Player.Head.transform.position == null)
-            { errortext = "Error: Can't get head position :("; throw new Exception(); }
-            if (BoneLib.Player.Head.transform.rotation == null)
-            { errortext = "Error: Can't get head rotation :("; throw new Exception(); }
-            if (BoneLib.Player.Head.transform.localScale == null)
-            { errortext = "Error: Can't get head scale :("; throw new Exception(); }
             if (BoneLib.Player.Head.transform == null)
             { errortext = "Error: Can't get head transform :("; throw new Exception(); }
+            if (BoneLib.Player.PhysicsRig.m_chest == null)
+            { errortext = "Error: No chest bruh."; throw new Exception(); }
+            if (BoneLib.Player.PhysicsRig.m_chest.transform == null)
+            { errortext = "Error: Can't get chest transform :("; throw new Exception(); }
 
+            // Log current head transform
             string headposition = BoneLib.Player.Head.transform.position.ToString();
             MelonLogger.Msg("Logged head position: " + headposition);
 
@@ -74,13 +76,22 @@ public static class LogThings
             string headscale = BoneLib.Player.Head.transform.localScale.ToString();
             MelonLogger.Msg("Logged head scale: " + headscale);
 
-            string headtransform = BoneLib.Player.Head.transform.ToString();
-            MelonLogger.Msg("Logged head transform: " + headtransform);
+            Vector3 referencePosition = BoneLib.Player.Chest.transform.position;
+            Vector3 referenceScale = BoneLib.Player.Chest.transform.localScale;
+
+            // Calculate and log offset
+            Vector3 positionOffset = BoneLib.Player.PhysicsRig.m_chest.transform.position - referencePosition;
+            MelonLogger.Msg("Logged head and chest position offset: " + positionOffset.ToString());
+
+            Vector3 scaleOffset = BoneLib.Player.PhysicsRig.m_chest.transform.localScale - referenceScale;
+            MelonLogger.Msg("Logged head and chest scale offset: " + positionOffset.ToString());
         }
-        catch (Exception)
+        catch (Exception error)
         {
-            MarrowModCommitteeToolbox.BoneMenuNotif(NotificationType.Error, errortext);
+            Main.BoneMenuNotif(NotificationType.Error, errortext);
+            MelonLogger.Msg("Exception occured: "+ error.ToString());
             return;
         }
     }
+
 }

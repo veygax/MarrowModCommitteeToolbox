@@ -1,80 +1,127 @@
-﻿/*using Il2CppInterop.Runtime.InteropTypes;
+﻿using HarmonyLib;
 using Il2CppSLZ.Marrow;
-using Il2CppSystem.Collections.Generic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Il2CppSLZ.Marrow.PuppetMasta.Muscle;
-using HarmonyLib;
-using BoneLib;
+using System.Reflection;
+using MelonLoader;
+using Il2CppSLZ.Marrow.PuppetMasta;
+using Il2CppSLZ.Bonelab;
 
+namespace MarrowModCommitteeToolbox.Cheats;
 public static class AnyMagazine
 {
-    [HarmonyPatch(typeof(AmmoPlug), "OnPlugInsertComplete")]
-    public static class AmmoPlugOnPlugInsertCompletePatch
+    public static void ApplyPatches(MelonMod mod)
     {
-        private static Hand FindLocalHand(InteractableHost host)
+        var harmony = mod.HarmonyInstance;
+
+        var onPlugInsertCompleteMethod = typeof(AmmoPlug).GetMethod("OnPlugInsertComplete", BindingFlags.Instance | BindingFlags.NonPublic);
+        var awakeMethod = typeof(AmmoPlug).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        var onPlugInsertCompletePrefix = typeof(AnyMagazine).GetMethod(nameof(OnPlugInsertCompletePatchPrefix), BindingFlags.Static | BindingFlags.NonPublic);
+        var awakePrefix = typeof(AnyMagazine).GetMethod(nameof(AmmoPlugProxyGripFixPrefix), BindingFlags.Static | BindingFlags.NonPublic);
+
+        if (onPlugInsertCompleteMethod != null && onPlugInsertCompletePrefix != null)
         {
-            Enumerator<Hand> enumerator = host._hands.GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                Hand current = enumerator.Current;
-                if (((Object)current.manager).name == "[RigManager (Blank)]")
-                {
-                    return current;
-                }
-            }
-            return null;
+            harmony.Patch(onPlugInsertCompleteMethod, new HarmonyMethod(onPlugInsertCompletePrefix));
+#if DEBUG
+            MelonLogger.Msg("Patched AmmoPlug.OnPlugInsertComplete method.");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Error("Failed to patch AmmoPlug.OnPlugInsertComplete method: method or patchMethod is null.");
+#endif
         }
 
-        private static void Prefix(AmmoPlug __instance)
+        if (awakeMethod != null && awakePrefix != null)
         {
-            if (!Prefs.Enabled || (!Prefs.ApplyMagazine && !Prefs.ApplyCartridge))
+            harmony.Patch(awakeMethod, new HarmonyMethod(awakePrefix));
+#if DEBUG
+            MelonLogger.Msg("Patched AmmoPlug.Awake method.");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Error("Failed to patch AmmoPlug.Awake method: method or patchMethod is null.");
+#endif
+        }
+    }
+
+    public static void RevertPatches(MelonMod mod)
+    {
+        var harmony = mod.HarmonyInstance;
+
+        var onPlugInsertCompleteMethod = typeof(AmmoPlug).GetMethod("OnPlugInsertComplete", BindingFlags.Instance | BindingFlags.NonPublic);
+        var awakeMethod = typeof(AmmoPlug).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        if (onPlugInsertCompleteMethod != null)
+        {
+            harmony.Unpatch(onPlugInsertCompleteMethod, HarmonyPatchType.Prefix);
+#if DEBUG
+            MelonLogger.Msg("Unpatched AmmoPlug.OnPlugInsertComplete method.");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Error("Failed to unpatch AmmoPlug.OnPlugInsertComplete method: method is null.");
+#endif
+        }
+
+        if (awakeMethod != null)
+        {
+            harmony.Unpatch(awakeMethod, HarmonyPatchType.Prefix);
+#if DEBUG
+            MelonLogger.Msg("Unpatched AmmoPlug.Awake method.");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            MelonLogger.Error("Failed to unpatch AmmoPlug.Awake method: method is null.");
+#endif
+        }
+    }
+
+    private static Hand FindLocalHand(InteractableHost host)
+    {
+        foreach (Hand current in host._hands)
+        {
+            if (current.manager.name == "[RigManager (Blank)]")
             {
-                return;
+                return current;
             }
-            Hand lastHand = ((Plug)__instance).host.GetLastHand();
-            if (!((Object)(object)lastHand != (Object)null) || (!lastHand.Controller.GetThumbStick() && Prefs.HoldThumbstick))
+        }
+        return null;
+    }
+
+    private static void OnPlugInsertCompletePatchPrefix(AmmoPlug __instance)
+    {
+        Hand lastHand = __instance.host.GetLastHand();
+        AmmoSocket val = __instance._lastSocket.TryCast<AmmoSocket>();
+        if (val != null && __instance.magazine != null && __instance.magazine.magazineState != null && val.gun != null && val.host != null)
+        {
+            Hand val2 = FindLocalHand(((Socket)val).host);
+            Gun gun = val.gun;
+            InventoryAmmoReceiver ammoReceiver = PlayerRefs.Instance.PlayerInvAmmoReceiver;
+            if (val2 != null && val2.slot != null)
             {
-                return;
+                ammoReceiver.OnHandItemSlotRemoved(val2.slot);
             }
-            AmmoSocket val = ((Il2CppObjectBase)((AlignPlug)__instance)._lastSocket).TryCast<AmmoSocket>();
-            if ((Object)(object)val != (Object)null && (Object)(object)__instance.magazine != (Object)null && __instance.magazine.magazineState != null && (Object)(object)val.gun != (Object)null && (Object)(object)((Socket)val).host != (Object)null)
+            gun.defaultMagazine = __instance.magazine.magazineState.magazineData;
+            gun.defaultCartridge = __instance.magazine.magazineState.cartridgeData;
+            if (val2 != null && val2.slot != null)
             {
-                Hand val2 = FindLocalHand(((Socket)val).host);
-                Gun gun = val.gun;
-                InventoryAmmoReceiver ammoReceiver = gun._AmmoInventory.ammoReceiver;
-                if ((Object)(object)val2 != (Object)null && (Object)(object)val2.slot != (Object)null)
-                {
-                    ammoReceiver.OnHandItemSlotRemoved(val2.slot);
-                }
-                if (Prefs.ApplyMagazine)
-                {
-                    gun.defaultMagazine = __instance.magazine.magazineState.magazineData;
-                }
-                if (Prefs.ApplyCartridge)
-                {
-                    gun.defaultCartridge = __instance.magazine.magazineState.cartridgeData;
-                }
-                if ((Object)(object)val2 != (Object)null && (Object)(object)val2.slot != (Object)null)
-                {
-                    ammoReceiver.OnHandItemSlot(val2.slot);
-                }
+                ammoReceiver.OnHandItemSlot(val2.slot);
             }
         }
     }
 
-    [HarmonyPatch(typeof(AmmoPlug), "Awake")]
-    public static class AmmoPlugProxyGripFix
+    private static void AmmoPlugProxyGripFixPrefix(AmmoPlug __instance)
     {
-        private static void Prefix(AmmoPlug __instance)
+        if (__instance.proxyGrip == null && __instance.magazine.grip != null)
         {
-            if ((Object)(object)((AlignPlug)__instance).proxyGrip == (Object)null && (Object)(object)__instance.magazine.grip != (Object)null)
-            {
-                ((AlignPlug)__instance).proxyGrip = __instance.magazine.grip;
-            }
+            __instance.proxyGrip = __instance.magazine.grip;
         }
     }
-}*/
+}

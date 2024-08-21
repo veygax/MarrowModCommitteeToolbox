@@ -8,6 +8,7 @@ using System.Reflection;
 using Il2CppSLZ.Interaction;
 using MelonLoader;
 using HarmonyLib;
+using UnityEngine.Events; 
 
 public static class LevelButtons
 {
@@ -16,7 +17,7 @@ public static class LevelButtons
         var harmony = mod.HarmonyInstance;
 
         var methodToPatch = typeof(ButtonToggle).GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        var patchMethod = typeof(LevelButtons).GetMethod(nameof(DontRunThis), BindingFlags.Static | BindingFlags.Public);
+        var patchMethod = typeof(LevelButtons).GetMethod(nameof(PatchButtonToggleUpdate), BindingFlags.Static | BindingFlags.Public);
 
         if (methodToPatch != null && patchMethod != null)
         {
@@ -54,12 +55,19 @@ public static class LevelButtons
         }
     }
 
-    public static bool DontRunThis(MethodBase __originalMethod)
+    public static bool PatchButtonToggleUpdate(ButtonToggle __instance)
     {
+        if (__instance != null)
+        {
+            if (__instance.onPress != null)
+            {
 #if DEBUG
-        MelonLogger.Msg($"DontRunThis method called. Preventing execution of {__originalMethod.DeclaringType.Name}.{__originalMethod.Name}.");
+                MelonLogger.Msg("Disabling ButtonToggle.onPress event.");
 #endif
-        return false;
-    }
+                __instance.onPress.RemoveAllListeners(); // Removes all listeners from the onPress event.
+            }
+        }
 
+        return true;
+    }
 }

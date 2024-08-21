@@ -13,6 +13,9 @@ using UnityEngine.Playables;
 using Il2CppSLZ.Bonelab;
 using HarmonyLib;
 
+
+namespace MarrowModCommitteeToolbox.Cheats.Scaling;
+
 public class AvatarScale
 {
     public static float scale = 1f;
