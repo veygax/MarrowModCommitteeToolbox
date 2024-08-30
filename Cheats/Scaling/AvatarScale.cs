@@ -40,7 +40,7 @@ public class AvatarScale
         AvatarCrate crate;
         if (AssetWarehouse.Instance.TryGetCrate(Player.RigManager._avatarCrate._barcode, out crate))
         {
-            System.Action<GameObject> action = delegate (GameObject obj)
+            Action<GameObject> action = delegate (GameObject obj)
             {
                 GameObject gameObject = UnityEngine.Object.Instantiate(obj);
                 Vector3 localScale = gameObject.transform.localScale;
@@ -63,7 +63,7 @@ public class AvatarScale
                 Player.RigManager.SwitchAvatar(componentInChildren);
                 PlayerRefs.Instance._bodyVitals.PROPEGATE();
             };
-            ((CrateT<GameObject>)(object)crate).LoadAsset((Il2CppSystem.Action<GameObject>)action);
+            crate.LoadAsset(action);
         }
         else
         {

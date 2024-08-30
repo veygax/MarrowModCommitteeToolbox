@@ -61,7 +61,7 @@ public static class LogThings
             { errortext = "Error: No head bruh."; throw new Exception(); }
             if (BoneLib.Player.Head.transform == null)
             { errortext = "Error: Can't get head transform :("; throw new Exception(); }
-            if (BoneLib.Player.PhysicsRig.m_chest == null)
+            if (BoneLib.Player.PhysicsRig.m_chest.gameObject.transform == null)
             { errortext = "Error: No chest bruh."; throw new Exception(); }
             if (BoneLib.Player.PhysicsRig.m_chest.transform == null)
             { errortext = "Error: Can't get chest transform :("; throw new Exception(); }
@@ -76,15 +76,15 @@ public static class LogThings
             string headscale = BoneLib.Player.Head.transform.localScale.ToString();
             MelonLogger.Msg("Logged head scale: " + headscale);
 
-            Vector3 referencePosition = BoneLib.Player.Chest.transform.position;
-            Vector3 referenceScale = BoneLib.Player.Chest.transform.localScale;
+            Vector3 referencePosition = BoneLib.Player.Head.transform.position;
+            Vector3 referenceScale = BoneLib.Player.Head.transform.localScale;
 
             // Calculate and log offset
-            Vector3 positionOffset = BoneLib.Player.PhysicsRig.m_chest.transform.position - referencePosition;
-            MelonLogger.Msg("Logged head and chest position offset: " + positionOffset.ToString());
+            Vector3 positionOffset = BoneLib.Player.PhysicsRig.m_chest.gameObject.transform.position - referencePosition;
+            MelonLogger.Msg("Logged head and player position offset: " + positionOffset.ToString());
 
-            Vector3 scaleOffset = BoneLib.Player.PhysicsRig.m_chest.transform.localScale - referenceScale;
-            MelonLogger.Msg("Logged head and chest scale offset: " + positionOffset.ToString());
+            Vector3 scaleOffset = BoneLib.Player.PhysicsRig.m_chest.gameObject.transform.localScale - referenceScale;
+            MelonLogger.Msg("Logged head and player scale offset: " + positionOffset.ToString());
         }
         catch (Exception error)
         {

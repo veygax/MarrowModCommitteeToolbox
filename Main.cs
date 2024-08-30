@@ -17,7 +17,6 @@ public class Main : MelonMod
     public static MelonPreferences_Entry<bool> MelonPrefImmortalityEnabled { get; private set; }
     public static MelonPreferences_Entry<bool> MelonPrefLevelButtonsDisabled { get; private set; }
     public static MelonPreferences_Entry<bool> MelonPrefHeadFixed { get; private set; }
-    public static MelonPreferences_Entry<bool> MelonPrefAnyMagazineEnabled { get; private set; }
 
 
     public static bool isNoBloodEnabled { get; private set; }
@@ -25,7 +24,6 @@ public class Main : MelonMod
     public static bool isImmortalityEnabled { get; private set; }
     public static bool isLevelButtonsDisabled { get; private set; }
     public static bool isHeadFixed { get ; private set; }
-    public static bool isAnyMagazineEnabled { get; private set; }
 
     public static Page menuPage { get; private set; }
     public static Page cheatsCategory { get; private set; }
@@ -45,7 +43,6 @@ public class Main : MelonMod
 
     public static BoolElement infiniteAmmoEnabledMenu { get; private set; }
     public static BoolElement immortalityEnabledMenu { get; private set; }
-    public static BoolElement anyMagazineEnabledMenu { get; private set; }
 
     public static FloatElement setAvatarScaleMenu { get; private set; }
     public static FunctionElement applyAvatarScaleMenu { get; private set; }
@@ -73,15 +70,14 @@ public class Main : MelonMod
         InitializeInfiniteAmmo(false);
         InitializeImmortality(false);
         InitializeLevelButtonDisabler(false);
-        InitializeAnyMagazine(false);
-        //InitializeHeadFixer(false);
+        InitializeHeadFixer(false);
     }
 
     public override void OnUpdate()
     {
         if (isHeadFixed)
         {
-            FixHead.SetPosition();
+            FixHead.SetOffset();
         }
     }
 
@@ -93,13 +89,11 @@ public class Main : MelonMod
         MelonPrefImmortalityEnabled = MelonPrefCategory.CreateEntry("isImmortalityEnabled", false);
         MelonPrefLevelButtonsDisabled = MelonPrefCategory.CreateEntry("isLevelButtonsDisabled", false);
         MelonPrefHeadFixed = MelonPrefCategory.CreateEntry("isHeadFixed", false);
-        MelonPrefAnyMagazineEnabled = MelonPrefCategory.CreateEntry("isAnyMagazineEnabled", false);
 
         isNoBloodEnabled = MelonPrefNoBloodEnabled.Value;
         isInfiniteAmmoEnabled = MelonPrefInfiniteAmmoEnabled.Value;
         isImmortalityEnabled = MelonPrefImmortalityEnabled.Value;
         isLevelButtonsDisabled = MelonPrefLevelButtonsDisabled.Value;
-        isAnyMagazineEnabled = MelonPrefAnyMagazineEnabled.Value;
         isHeadFixed = MelonPrefHeadFixed.Value;
 
         _preferencesSetup = true;
@@ -120,12 +114,11 @@ public class Main : MelonMod
         noBloodEnabledMenu = miscCategory.CreateBool("NoBlood", Color.red, isNoBloodEnabled, OnSetNoBloodEnabled);
         spawnScenemakingToolsMenu = miscCategory.CreateFunction("Spawn Scenemaking Tools", Color.white, ScenemakingToolsSpawner.SpawnTools);
         disableLevelButtonsMenu = miscCategory.CreateBool("Disable Level Buttons", Color.white, isLevelButtonsDisabled, OnSetLevelButtonsDisabled);
-        //fixHeadMenu = miscCategory.CreateBool("Fix Head", Color.white, isHeadFixed, OnSetHeadFixed);
+        fixHeadMenu = miscCategory.CreateBool("Fix Head", Color.white, isHeadFixed, OnSetHeadFixed);
 
 
         infiniteAmmoEnabledMenu = cheatsCategory.CreateBool("Infinite Ammo", Color.yellow, isInfiniteAmmoEnabled, OnSetInfiniteAmmoEnabled);
         immortalityEnabledMenu = cheatsCategory.CreateBool("Immortality", Color.cyan, isImmortalityEnabled, OnSetImmortalityEnabled);
-        //anyMagazineEnabledMenu = cheatsCategory.CreateBool("Any Magazine", Color.red, isAnyMagazineEnabled, OnSetImmortalityEnabled);
 
 
         logLeftHandMenu = debugCategory.CreateFunction("Log Left Hand Contents", Color.white, LogThings.LogItemInLeftHand);
@@ -224,15 +217,7 @@ public class Main : MelonMod
         InitializeHeadFixer(true);
     }
 
-    private void OnSetAnyMagazineEnabled(bool value)
-    {
-        isAnyMagazineEnabled = value;
-        MelonPrefAnyMagazineEnabled.Value = value;
-        MelonPrefCategory.SaveToFile(false);
-        InitializeAnyMagazine(true);
-    }
-
-    // Initialize different tools
+  // Initialize different tools
 
     private void InitializeImmortality(bool updated)
     {
@@ -340,14 +325,14 @@ public class Main : MelonMod
         {
             if (isHeadFixed)
             {
-                FixHead.SetPosition();
+                FixHead.SetOffset();
 #if DEBUG
                 MelonLogger.Msg("Fixed head.");
 #endif
             }
             else if (isHeadFixed == false && updated == true)
             {
-                FixHead.RevertPosition();
+                FixHead.RevertOffset();
 #if DEBUG
                 MelonLogger.Msg("Broke your neck lol.");
 #endif
@@ -358,31 +343,4 @@ public class Main : MelonMod
             MelonLogger.Error($"Error while fixing head: {ex.Message}");
         }
     }
-
-    private void InitializeAnyMagazine(bool updated)
-    {
-        try
-        {
-            if (isAnyMagazineEnabled)
-            {
-                MarrowModCommitteeToolbox.Cheats.AnyMagazine.ApplyPatches(this);
-#if DEBUG
-                MelonLogger.Msg("Applied AnyMagazine Patches.");
-#endif
-            }
-            else if (isAnyMagazineEnabled == false && updated == true)
-            {
-                MarrowModCommitteeToolbox.Cheats.AnyMagazine.RevertPatches(this);
-#if DEBUG
-                MelonLogger.Msg("Reverted AnyMagazine Patches.");
-#endif
-            }
-        }
-        catch (Exception ex)
-        {
-            MelonLogger.Error($"Error while patching methods for AnyMagazine: {ex.Message}");
-        }
-    }
-
-
 }
